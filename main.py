@@ -3,6 +3,8 @@ import urllib
 import jinja2
 import webapp2
 
+from google.appengine.api import users
+from google.appengine.ext import ndb
 from webapp2_extras import sessions
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -25,18 +27,21 @@ class Orders():
         'qty':'',
     }
 
+# products = getproduct()
+# for (key, value) in products.items() :
+#     print "%r = %r" % (key,value)
 
 
-# # Start Model
-# class User(ndb.Model):
-#     username = ndb.StringProperty()
-#     password = ndb.StringProperty()
+# Start Model
+class User(ndb.Model):
+    username = ndb.StringProperty()
+    password = ndb.StringProperty()
 
-# class Order(ndb.Model):
-#     items = ndb.JsonProperty(repeated=True)
-#     user  = ndb.StringProperty()
-#     created_date = ndb.DateTimeProperty(auto_now_add=True)
-# # End Model
+class Order(ndb.Model):
+    items = ndb.JsonProperty(repeated=True)
+    user  = ndb.StringProperty()
+    created_date = ndb.DateTimeProperty(auto_now_add=True)
+# End Model
 
 class BaseHandler(webapp2.RequestHandler):
     def dispatch(self):
