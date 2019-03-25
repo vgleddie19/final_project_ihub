@@ -73,7 +73,7 @@
             <a href="/" class="item">
                 <i class="home icon"></i> HOME
             </a>
-            <a href="/order" class="item">
+            <a href="/order" class="item active">
                 <i class="clipboard list icon"></i> ORDER
             </a>
             <a href="/stocks" class="item">
@@ -134,21 +134,21 @@
                 Order Product
             </div>
             <div class="content field">
-                <form action="#" id="orderform" class="ui form">
-                    <div class="ui large compact blue segment">
+                <form action="#" id="orderform" class="ui form" action ="/order">
+                    <div class="ui large blue segment">
 
                         <div class="field">
-                            <label for="vehiclecode">Trip Code</label>
-                            <input name="vehiclecode" id="vehiclecode" type="text" placeholder="Trip Code" required>
+                            <label for="productcode">Product Code</label>
+                            <input name="productcode" id="productcode" type="text" placeholder="Product Code" required>
                         </div>
 
-                        <div class="two fields">
+                        <!-- <div class="two fields"> -->
                             <div class="field">
-                                <label for="model">Vehicle Code</label>
-                                <input name="model" id="model" type="text" placeholder="Vehicle Code">
+                                <label for="salesman">salesman</label>
+                                <input name="salesman" id="salesman" type="text" placeholder="Sales Man">
                             </div>
 
-                            <div class="field">
+                            <!-- <div class="field">
                                 <label for="vehicletype">Expected Start</label>
                                 <select name="vehicletype" id="vehicletype" class="ui search selection dropdown">
                                     <option value="">Expected Start</option>
@@ -158,8 +158,8 @@
                                     <option value="3">Motorcycle</option>
                                     <option value="4">Pickup Truck</option>
                                 </select>
-                            </div>
-                        </div>
+                            </div> -->
+                        <!-- </div> -->
                         <div class="field">
                             <label for="location">Location</label>
                             <select name="location" id="location" class="ui search selection dropdown">
@@ -173,17 +173,13 @@
                                 <option value="6">Tacloban</option>
                             </select>
                         </div>
-                        <button class="ui blue button" type="submit">Submit</button>
+                        <button class="ui blue button" type="submit" value="">Submit</button>
                         <input class="ui red button" type="reset" value="Cancel" id="cancel">
-
-
                     </div>
-
+                </form>
             </div>
-            </form>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 </body>
 

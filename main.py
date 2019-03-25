@@ -15,32 +15,24 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class Orders():
     details = {
-        'Shoes':1000,
-        'Slippers':200,
-        'Sandals':500,
-        'Bakya':150
+        'customercode':'',
+        'smancode':'',
+        'address':'',
+        'dateorder':''
     }
-    products = {
-        'productcode':'',
-        'description':'',
-        'uom':'',
-        'qty':'',
-    }
-
-# products = getproduct()
-# for (key, value) in products.items() :
-#     print "%r = %r" % (key,value)
-
+    products = { }
 
 # Start Model
 class User(ndb.Model):
     username = ndb.StringProperty()
     password = ndb.StringProperty()
 
-class Order(ndb.Model):
-    items = ndb.JsonProperty(repeated=True)
+class Orders(ndb.Model):
+    details = ndb.StringProperty()
+    items = ndb.StringProperty()
     user  = ndb.StringProperty()
     created_date = ndb.DateTimeProperty(auto_now_add=True)
+
 # End Model
 
 class BaseHandler(webapp2.RequestHandler):
@@ -80,7 +72,25 @@ class Order(BaseHandler):
         self.render('order.html',{'user':user})
         return
     def post(self):
-        get
+        username = self.request.get('')
+        password = self.request.get('password')
+        user = User.query(User.username == username).get()
+        if user:
+            if user.password == password:
+                self.session['user'] = user.username
+                self.redirect('/')
+                return
+            self.redirect('/login?error=1')
+            return
+        else:
+            user = User(
+                username=username,
+                password=password
+            )
+            user.put()
+            self.redirect('/login?success=1')
+        self.redirect('/login')
+        return
 
 class Stocks(BaseHandler):
     def get(self):
