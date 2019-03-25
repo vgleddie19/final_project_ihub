@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Standard Meta -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css"> -->
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/dataTables.semanticui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/dataTables.semanticui.min.js"></script>
+    <script src="js/ext.js"></script>
+    <script>
+        $(document)
+            .ready(function () {
+
+                // fix main menu to page on passing
+                $('.main.menu').visibility({
+                    type: 'fixed'
+                });
+                $('.overlay').visibility({
+                    type: 'fixed',
+                    offset: 80
+                });
+
+                // lazy load images
+                $('.image').visibility({
+                    type: 'image',
+                    transition: 'vertical flip in',
+                    duration: 500
+                });
+
+                // show dropdown on hover
+                $('.ui.dropdown').dropdown({
+                    on: 'hover'
+                });
+
+                //$('.menu .item').tab();
+
+                //$('table').tablesort();
+
+                $('#cancel').on('click', function () {
+                    if ($('.ui.accordion').attr('open'))
+                        $('.ui.accordion').accordion('close', 0);
+                    $('#vehicletype').dropdown('clear');
+                    $('#location').dropdown('clear');
+                });
+
+                $('.ui.accordion').accordion({
+                    onClose: function () {
+                        $('.ui.accordion').attr('open', false);
+                    },
+                    onOpen: function () {
+                        $('.ui.accordion').attr('open', true);
+                    },
+                    collapsible: true
+                });
+
+                $('#triptable').DataTable();
+
+            });
+    </script>
+</head>
+
+<body>
+    <div class="ui top attached secondary blue huge pointing menu">
+        <div class="ui container">
+            <a href="/" class="item">
+                <i class="home icon"></i> HOME
+            </a>
+            <a href="/order" class="item">
+                <i class="clipboard list icon"></i> ORDER
+            </a>
+            <a href="/stocks" class="item">
+                <i class="box icon"></i> STOCKS
+            </a>
+        </div>
+    </div>
+    <div class="ui raised container segment">
+
+        <h3 class="ui dividing header">
+            <i class="dolly flatbed icon large"></i>
+            <div class="content top">
+                ORDER PRODUCTS
+            </div>
+            <!-- <i class="calendar alternate outline icon"></i> -->
+        </h3>
+
+        <table class="ui selectable sortable blue large padded table" id="triptable">
+            <thead>
+                <tr class="center aligned">
+                    <th>Product Code</th>
+                    <th>Description</th>
+                    <th>UOM</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-label="Product Code">TRIP001</td>
+                    <td class="center aligned" data-label="Description">DV001</td>
+                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
+                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
+                </tr>
+                <tr>
+                    <td data-label="Trip Code">TRIP002</td>
+                    <td class="center aligned" data-label="Description">DV001</td>
+                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
+                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
+                </tr>
+                <tr>
+                    <td data-label="Trip Code">TRIP003</td>
+                    <td class="center aligned" data-label="Description">DV001</td>
+                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
+                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
+                </tr>
+                <tr>
+                    <td data-label="Trip Code">TRIP003</td>
+                    <td class="center aligned" data-label="Description">DV001</td>
+                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
+                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <div class="ui accordion field">
+            <div class="ui blue button title">
+                <i class="boxes icon"></i>
+                Order Product
+            </div>
+            <div class="content field">
+                <form action="#" id="orderform" class="ui form">
+                    <div class="ui large compact blue segment">
+
+                        <div class="field">
+                            <label for="vehiclecode">Trip Code</label>
+                            <input name="vehiclecode" id="vehiclecode" type="text" placeholder="Trip Code" required>
+                        </div>
+
+                        <div class="two fields">
+                            <div class="field">
+                                <label for="model">Vehicle Code</label>
+                                <input name="model" id="model" type="text" placeholder="Vehicle Code">
+                            </div>
+
+                            <div class="field">
+                                <label for="vehicletype">Expected Start</label>
+                                <select name="vehicletype" id="vehicletype" class="ui search selection dropdown">
+                                    <option value="">Expected Start</option>
+                                    <option value="0">Delivery Van</option>
+                                    <option value="1">Container Truck</option>
+                                    <option value="2">Trailer Truck</option>
+                                    <option value="3">Motorcycle</option>
+                                    <option value="4">Pickup Truck</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="location">Location</label>
+                            <select name="location" id="location" class="ui search selection dropdown">
+                                <option value="">Location</option>
+                                <option value="0">Bacolod</option>
+                                <option value="1">Cagayan de Oro</option>
+                                <option value="2">Cebu</option>
+                                <option value="3">Davao</option>
+                                <option value="4">Ilo Ilo</option>
+                                <option value="5">Pangasinan</option>
+                                <option value="6">Tacloban</option>
+                            </select>
+                        </div>
+                        <button class="ui blue button" type="submit">Submit</button>
+                        <input class="ui red button" type="reset" value="Cancel" id="cancel">
+
+
+                    </div>
+
+            </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+
+</html>
