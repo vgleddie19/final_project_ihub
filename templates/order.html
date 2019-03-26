@@ -14,6 +14,7 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/dataTables.semanticui.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/dataTables.semanticui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
     <script src="js/ext.js"></script>
     <script>
         $(document)
@@ -82,94 +83,179 @@
         </div>
     </div>
     <div class="ui raised container segment">
-
-        <h3 class="ui dividing header">
-            <i class="dolly flatbed icon large"></i>
-            <div class="content top">
-                ORDER PRODUCTS
-            </div>
-            <!-- <i class="calendar alternate outline icon"></i> -->
-        </h3>
-
-        <table class="ui selectable sortable blue large padded table" id="triptable">
-            <thead>
-                <tr class="center aligned">
-                    <th>Product Code</th>
-                    <th>Description</th>
-                    <th>UOM</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for prod in prodorders%}
-                <tr>{% for detail in prod.product%}
-                        <td data-label="productcode">{{ detail }}</td>
-                    {% endfor %}</tr>
-                {% endfor %}
-                <!-- <tr>
-                    <td data-label="Trip Code">TRIP002</td>
-                    <td class="center aligned" data-label="Description">DV001</td>
-                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
-                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
-                </tr>
-                <tr>
-                    <td data-label="Trip Code">TRIP003</td>
-                    <td class="center aligned" data-label="Description">DV001</td>
-                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
-                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
-                </tr>
-                <tr>
-                    <td data-label="Trip Code">TRIP003</td>
-                    <td class="center aligned" data-label="Description">DV001</td>
-                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
-                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
-                </tr> -->
-            </tbody>
-        </table>
-        <br>
-        <div class="ui accordion field">
-            <div class="ui blue button title">
-                <i class="boxes icon"></i>
-                Order Product
-            </div>
-            <div class="content field">
-                <form action="#" id="orderform" class="ui form" action="/order"  method="POST">
-                    <div class="ui large blue segment">
-
-                        <div class="two fields">
-                            <div class="field four wide">
-                                <label for="productcode">Product Code</label>
-                                <input name="productcode" id="productcode" type="text" placeholder="Product Code"
-                                    required>
-                            </div>
-                            <div class="field disabled input twelve wide">
-                                <label for="description">Description</label>
-                                <input name="description" id="description" type="text">
-                            </div>
+        <div class="ui raised container segment">
+            <form class="ui form" action="/submitorder" method="POST">
+                <h4 class="ui dividing header">Shipping Information</h4>
+                <div class="field">
+                    <label>Name</label>
+                    <div class="two fields">
+                        <div class="field">
+                            <input type="text" name="shipping[first-name]" placeholder="First Name"
+                                value="{{ details[0] }}">
                         </div>
-
-                        <div class="two fields">
-                            <div class="field">
-                                <label for="uom">UOM</label>
-                                <select name="uom" id="uom" class="ui search selection dropdown">
-                                    <option value="">UOM</option>
-                                    <option value="CASE">CASE</option>
-                                    <option value="PCS">PCS</option>
-                                </select>
-                            </div>
-                            <div class="field">
-                                <label for="quantity">Quantity</label>
-                                <input name="qty" id="qty" type="text">
-                            </div>
+                        <div class="field">
+                            <input type="text" name="shipping[last-name]" placeholder="Last Name"
+                                value="{{ details[1] }}">
                         </div>
-                        <button class="ui blue button" type="submit" value="">Submit</button>
-                        <input class="ui red button" type="reset" value="Cancel" id="cancel">
                     </div>
-                </form>
+                </div>
+                <div class="field">
+                    <label>Billing Address</label>
+                    <div class="fields">
+                        <div class="twelve wide field">
+                            <input type="text" name="shipping[address]" placeholder="Street Address">
+                        </div>
+                        <div class="four wide field">
+                            <input type="text" name="shipping[address-2]" placeholder="Apt #">
+                        </div>
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>City</label>
+                        <select class="ui fluid dropdown" name="States">
+                            <option value="">City</option>
+                            <option value="CEB">Cebu City</option>
+                            <option value="MDC">Mandaue City</option>
+                            <option value="LLC">Lapu-lapu City</option>
+                            <option value="CLC">Consolascio City</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Country</label>
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="country">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Select Country</div>
+                            <div class="menu">
+                                <div class="item" data-value="au"><i class="au flag"></i>Australia</div>
+                                <div class="item" data-value="at"><i class="at flag"></i>Austria</div>
+                                <div class="item" data-value="az"><i class="az flag"></i>Azerbaijan</div>
+                                <div class="item" data-value="br"><i class="br flag"></i>Brazil</div>
+                                <div class="item" data-value="kh"><i class="kh flag"></i>Cambodia</div>
+                                <div class="item" data-value="ca"><i class="ca flag"></i>Canada</div>
+                                <div class="item" data-value="dk"><i class="dk flag"></i>Denmark</div>
+                                <div class="item" data-value="do"><i class="do flag"></i>Dominican Republic</div>
+                                <div class="item" data-value="eg"><i class="eg flag"></i>Egypt</div>
+                                <div class="item" data-value="gb"><i class="gb flag"></i>England</div>
+                                <div class="item" data-value="ph"><i class="ph flag"></i>Philippines</div>
+                                <div class="item" data-value="us"><i class="us flag"></i>United States</div>
+                                <div class="item" data-value="zw"><i class="zw flag"></i>Zimbabwe</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui button green" tabindex="0">Submit Order</div>
+            </form>
+        </div>
+        <div class="ui raised container segment">
+            <h3 class="ui dividing header">
+                <i class="dolly flatbed icon large"></i>
+                <div class="content top">
+                    PRODUCTS ORDER
+                </div>
+                <!-- <i class="calendar alternate outline icon"></i> -->
+            </h3>
+            <table class="ui selectable sortable blue large padded table" id="triptable">
+                <thead>
+                    <tr class="center aligned">
+                        <th>Product Code</th>
+                        <th>Description</th>
+                        <th>UOM</th>
+                        <th>Quantity</th>
+                        <th class="two wide">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prod in preorder %}
+                    <tr class="center aligned">
+                        {% for detail in prod.product%}
+                        <td data-label="">{{ detail }}</td>
+                        {% endfor %}
+                        <form action="/order" method="post" name="removeprod">
+                            <td class="center aligned two wide">
+                                <input type="text" name="id" value="{{ prod.id }}" />
+                                <input type="hidden" value="REMOVEPRODUCT" name="intent">
+                                <button class="ui red button" type="submit" value="REMOVEPRODUCT"
+                                name="intent">Remove</button>
+                            </td>
+                        </form>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <div class="ui accordion field">
+                <div class="ui blue button title">
+                    <i class="boxes icon"></i>
+                    Add Product
+                </div>
+                <div class="content field">
+                    <form action="#" id="orderform" class="ui form" action="/order" method="post">
+                        <div class="ui large blue segment">
+
+                            <div class="two fields">
+                                <div class="field four wide">
+                                    <label for="productcode">Product Code</label>
+                                    <input name="productcode" id="productcode" type="text" placeholder="Product Code"
+                                        required>
+                                </div>
+                                <div class="field disabled input twelve wide">
+                                    <label for="description">Description</label>
+                                    <input name="description" id="description" type="text">
+                                </div>
+                            </div>
+
+                            <div class="two fields">
+                                <div class="field">
+                                    <label for="uom">UOM</label>
+                                    <select name="uom" id="uom" class="ui search selection dropdown">
+                                        <option value="">UOM</option>
+                                        <option value="CASE">CASE</option>
+                                        <option value="PCS">PCS</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="quantity">Quantity</label>
+                                    <input name="qty" id="qty" type="text">
+                                </div>
+                            </div>
+                            <button class="ui blue button" type="submit" value="ADDPRODUCT"
+                                name="intent">Submit</button>
+                            <input class="ui red button" type="reset" value="Cancel" id="cancel">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        $('[name="removeprod"]').on('submit', function(e) {
+            var self = this;
+            e.preventDefault();
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this todo.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then(function(willDelete) {
+                if (willDelete) {
+                    swal("Deleted successfully!", {
+                        icon: "success",
+                    });
+
+                    setTimeout(function() {
+                        self.submit();
+                    }, 1000);
+                }
+            });
+            return;
+        });
+    </script>
+
 </body>
 
 </html>

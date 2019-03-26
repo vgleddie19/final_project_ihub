@@ -2,6 +2,7 @@ import os
 import urllib
 import jinja2
 import webapp2
+import logging
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -13,18 +14,179 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True
 )
 
-details = ['SMCEBU','RAFFY','CEBU CITY']
-
 # Start Model
 class User(ndb.Model):
     username = ndb.StringProperty()
     password = ndb.StringProperty()
 
+class Products(ndb.Model):
+    product = ndb.StringProperty(repeated=True)
+    user  = ndb.StringProperty()
+
+    @classmethod
+    def create(cls, product, user):
+        prod = cls()
+        prod.product = product
+        prod.user = user
+        prod.put()
+        return prod
+    
+    @classmethod
+    def update(cls, id, product, user):
+        prod = cls.get_by_id(int(str(id)))
+        if not prod:
+            raise Exception('PRODUCT not found!')
+        prod.product = product
+        prod.user = user
+        prod.put()
+        return prod
+
+    @classmethod
+    def list_all(cls):
+        prod_results = cls.query().fetch()
+        results = []
+        for prod in prod_results:
+            results.append({
+                'id': prod.key.id(),
+                'product': prod.product
+            })
+
+        return results
+
+    @classmethod
+    def remove(cls, id):
+        prod = cls.get_by_id(int(str(id)))
+        if not prod:
+            raise Exception('PRODUCT not found')
+
+        prod.key.delete()
+        return True
+        
+    @classmethod
+    def remove_all(cls):
+        for idx in cls.query().fetch:
+            prod = cls.get_by_id(int(str(idx)))
+            if not prod:
+                raise Exception('PRODUCT not found')
+            prod.key.delete()
+        return true
+
+class ShippingDetails(ndb.Model):
+    details = ndb.StringProperty(repeated=True)
+    user  = ndb.StringProperty()
+
+    @classmethod
+    def create(cls, details, user):
+        prod = cls()
+        prod.details = details
+        prod.user = user
+        prod.put()
+        return prod
+    
+    @classmethod
+    def update(cls, id, details, user):
+        prod = cls.get_by_id(int(str(id)))
+        if not prod:
+            raise Exception('Shipping Details not found!')
+        prod.details = details
+        prod.user = user
+        prod.put()
+        return prod
+
+    @classmethod
+    def list_all(cls):
+        sd_results = cls.query().fetch()
+        results = []
+        for detail in sd_results:
+            results.append({
+                'id': detail.key.id(),
+                'details': detail.details
+            })
+
+        return results
+
+    @classmethod
+    def remove(cls, id):
+        detail = cls.get_by_id(int(str(id)))
+        if not detail:
+            raise Exception('Shipping Details not found')
+
+        detail.key.delete()
+        return True
+        
+    @classmethod
+    def remove_all(cls):
+        for idx in cls.query().fetch:
+            detail = cls.get_by_id(int(str(idx)))
+            if not detail:
+                raise Exception('Shipping Details not found')
+            detail.key.delete()
+        return true        
+               
 class Orders(ndb.Model):
     details = ndb.StringProperty(repeated=True)
     products = ndb.StringProperty(repeated=True)
     user  = ndb.StringProperty()
     created_date = ndb.DateTimeProperty(auto_now_add=True)
+
+    @classmethod
+    def create(cls, details, products, user):
+        order = cls()
+        order.products = products
+        order.details = details
+        order.user = user
+        order.put()
+        return order
+    
+    @classmethod
+    def update(cls, id, details, products, user):
+        order = cls.get_by_id(int(str(id)))
+        if not order:
+            raise Exception('ORDER not found!')
+        order.details = details
+        order.products = products
+        order.user = user
+        order.put()
+        return order
+
+    @classmethod
+    def list_all(cls):
+        order_results = cls.query().order(
+            -cls.created_date).fetch()
+        order = []
+        for prod in order_results:
+            pdetails = list(prod.products)
+            for idx, item in enumerate(pdetails):
+                r = item.strip('"')
+                pdetails[idx] = r
+
+            odetails = list(prod.details)
+            for idx, item in enumerate(odetails):
+                r = item.strip('"')
+                odetails[idx] = r
+            
+            order.append({
+                'details': odetails,
+                'products': pdetails,
+                'user':prod.user
+            })
+        return order
+
+    def remove(cls, id):
+        order = cls.get_by_id(int(str(id)))
+        if not order:
+            raise Exception('ORDER not found')
+
+        order.key.delete()
+        return True
+
+    def remove_all(cls):
+        for idx in cls().query().fetch:
+            order = cls.get_by_id(int(str(idx)))
+            if not order:
+                raise Exception('ORDER not found')
+            order.key.delete()
+        return true
 
 # End Model
 
@@ -61,64 +223,42 @@ class MainPage(BaseHandler):
 
 class Order(BaseHandler):
     def get(self):
-        user = self.session.get('user')
-        prod_results = Orders.query().fetch()
-        prodorders = []
-        for prod in prod_results:
-            pdetails = list(prod.products)
-            for idx, item in enumerate(pdetails):
-                r = item.strip('"')
-                pdetails[idx] = r
-
-            prodorders.append({
-                'id':prod.key.id(),
-                'details':list(prod.details),
-                'product':pdetails
-            })
-        self.render('order.html',{'user':user, 'prodorders':prodorders})
-        return
+        preorder = Products.list_all()
+        detail = ShippingDetails.list_all()
+        template_values = {
+            'preorder':preorder,
+            'details':detail
+        }
+        template = JINJA_ENVIRONMENT.get_template('order.html')
+        self.response.write(template.render(template_values))
     def post(self):
-        # product = [
-        #     self.request.get('productcode'),
-        #     self.request.get('description'),
-        #     self.request.get('uom')
-        # ]
-        # oproducts =Orders.query(Orders.products == product).get()
-        # # oproducts = list(oproducts)
-        # if oproduct
-        #     self.redirect('/order?error=1')
-        #     return
-        # else:
+        prodid = self.request.get('id')
+        intent = self.request.get('intent')
         sproduct = [
         self.request.get('productcode'),
         self.request.get('description'),
         self.request.get('uom'),
-        self.request.get('qty')
+        self.request.get('qty')        
         ]
-        orders = Orders(
-            details = details,
-            products=sproduct,
-            user="eddie",                
-        )
-        orders.put()
-        self.redirect('/order?success=1')
-        self.redirect('/order')
-        return
+        details = []
+        details.append(self.request.get('shipping[first-name]'))
+        details.append(self.request.get('shipping[last-name]'))
+        details.append(self.request.get('shipping[address]'))
+        details.append(self.request.get('shipping[address-2]'))
+        details.append(self.request.get('States'))    
+        details.append(self.request.get('country'))
 
-class Stocks(BaseHandler):
-    def get(self):
-        user = self.session.get('user')
-        self.render('stocks.html',{'user':user})
-        return
-    def post(self):
-        get
+        if intent == 'ADDPRODUCT':
+            if not details[0]:
+                ShippingDetails.create(details,'Eddie')                
+            Products.create(sproduct,'Eddie')
+        if intent == 'REMOVEPRODUCT':
+            Products.remove(prodid)
+        if intent == 'SAVEORDER':
+            products = Products.list_all()
+            # Orders       
 
-class Logout(BaseHandler):
-    def get(self):
-        del self.session['user']
-        self.redirect('/')
-        return
-
+        return self.redirect('/order')        
 
 class LogIn(BaseHandler):
     def get(self):
@@ -154,10 +294,7 @@ config['webapp2_extras.sessions'] = {
 }
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/login', LogIn),    
-    ('/logout', Logout),    
     ('/order',Order),
-    ('/stocks',Stocks),
 ], debug=True,
 config=config)
 # End App
