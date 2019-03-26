@@ -101,13 +101,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td data-label="Product Code">TRIP001</td>
-                    <td class="center aligned" data-label="Description">DV001</td>
-                    <td class="center aligned" data-label="Expected Start">12/12/2019</td>
-                    <td class="center aligned" data-label="Expected End">12/15/2019</td>
-                </tr>
-                <tr>
+                {% for prod in prodorders%}
+                <tr>{% for detail in prod.product%}
+                        <td data-label="productcode">{{ detail }}</td>
+                    {% endfor %}</tr>
+                {% endfor %}
+                <!-- <tr>
                     <td data-label="Trip Code">TRIP002</td>
                     <td class="center aligned" data-label="Description">DV001</td>
                     <td class="center aligned" data-label="Expected Start">12/12/2019</td>
@@ -124,7 +123,7 @@
                     <td class="center aligned" data-label="Description">DV001</td>
                     <td class="center aligned" data-label="Expected Start">12/12/2019</td>
                     <td class="center aligned" data-label="Expected End">12/15/2019</td>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
         <br>
@@ -134,44 +133,34 @@
                 Order Product
             </div>
             <div class="content field">
-                <form action="#" id="orderform" class="ui form" action ="/order">
+                <form action="#" id="orderform" class="ui form" action="/order"  method="POST">
                     <div class="ui large blue segment">
 
-                        <div class="field">
-                            <label for="productcode">Product Code</label>
-                            <input name="productcode" id="productcode" type="text" placeholder="Product Code" required>
+                        <div class="two fields">
+                            <div class="field four wide">
+                                <label for="productcode">Product Code</label>
+                                <input name="productcode" id="productcode" type="text" placeholder="Product Code"
+                                    required>
+                            </div>
+                            <div class="field disabled input twelve wide">
+                                <label for="description">Description</label>
+                                <input name="description" id="description" type="text">
+                            </div>
                         </div>
 
-                        <!-- <div class="two fields"> -->
+                        <div class="two fields">
                             <div class="field">
-                                <label for="salesman">salesman</label>
-                                <input name="salesman" id="salesman" type="text" placeholder="Sales Man">
-                            </div>
-
-                            <!-- <div class="field">
-                                <label for="vehicletype">Expected Start</label>
-                                <select name="vehicletype" id="vehicletype" class="ui search selection dropdown">
-                                    <option value="">Expected Start</option>
-                                    <option value="0">Delivery Van</option>
-                                    <option value="1">Container Truck</option>
-                                    <option value="2">Trailer Truck</option>
-                                    <option value="3">Motorcycle</option>
-                                    <option value="4">Pickup Truck</option>
+                                <label for="uom">UOM</label>
+                                <select name="uom" id="uom" class="ui search selection dropdown">
+                                    <option value="">UOM</option>
+                                    <option value="CASE">CASE</option>
+                                    <option value="PCS">PCS</option>
                                 </select>
-                            </div> -->
-                        <!-- </div> -->
-                        <div class="field">
-                            <label for="location">Location</label>
-                            <select name="location" id="location" class="ui search selection dropdown">
-                                <option value="">Location</option>
-                                <option value="0">Bacolod</option>
-                                <option value="1">Cagayan de Oro</option>
-                                <option value="2">Cebu</option>
-                                <option value="3">Davao</option>
-                                <option value="4">Ilo Ilo</option>
-                                <option value="5">Pangasinan</option>
-                                <option value="6">Tacloban</option>
-                            </select>
+                            </div>
+                            <div class="field">
+                                <label for="quantity">Quantity</label>
+                                <input name="qty" id="qty" type="text">
+                            </div>
                         </div>
                         <button class="ui blue button" type="submit" value="">Submit</button>
                         <input class="ui red button" type="reset" value="Cancel" id="cancel">

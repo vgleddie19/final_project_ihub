@@ -13,14 +13,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True
 )
 
-class Orders():
-    details = {
-        'customercode':'',
-        'smancode':'',
-        'address':'',
-        'dateorder':''
-    }
-    products = { }
+details = ['SMCEBU','RAFFY','CEBU CITY']
 
 # Start Model
 class User(ndb.Model):
@@ -28,8 +21,8 @@ class User(ndb.Model):
     password = ndb.StringProperty()
 
 class Orders(ndb.Model):
-    details = ndb.StringProperty()
-    items = ndb.StringProperty()
+    details = ndb.StringProperty(repeated=True)
+    products = ndb.StringProperty(repeated=True)
     user  = ndb.StringProperty()
     created_date = ndb.DateTimeProperty(auto_now_add=True)
 
@@ -69,27 +62,47 @@ class MainPage(BaseHandler):
 class Order(BaseHandler):
     def get(self):
         user = self.session.get('user')
-        self.render('order.html',{'user':user})
+        prod_results = Orders.query().fetch()
+        prodorders = []
+        for prod in prod_results:
+            pdetails = list(prod.products)
+            for idx, item in enumerate(pdetails):
+                r = item.strip('"')
+                pdetails[idx] = r
+
+            prodorders.append({
+                'id':prod.key.id(),
+                'details':list(prod.details),
+                'product':pdetails
+            })
+        self.render('order.html',{'user':user, 'prodorders':prodorders})
         return
     def post(self):
-        username = self.request.get('')
-        password = self.request.get('password')
-        user = User.query(User.username == username).get()
-        if user:
-            if user.password == password:
-                self.session['user'] = user.username
-                self.redirect('/')
-                return
-            self.redirect('/login?error=1')
-            return
-        else:
-            user = User(
-                username=username,
-                password=password
-            )
-            user.put()
-            self.redirect('/login?success=1')
-        self.redirect('/login')
+        # product = [
+        #     self.request.get('productcode'),
+        #     self.request.get('description'),
+        #     self.request.get('uom')
+        # ]
+        # oproducts =Orders.query(Orders.products == product).get()
+        # # oproducts = list(oproducts)
+        # if oproduct
+        #     self.redirect('/order?error=1')
+        #     return
+        # else:
+        sproduct = [
+        self.request.get('productcode'),
+        self.request.get('description'),
+        self.request.get('uom'),
+        self.request.get('qty')
+        ]
+        orders = Orders(
+            details = details,
+            products=sproduct,
+            user="eddie",                
+        )
+        orders.put()
+        self.redirect('/order?success=1')
+        self.redirect('/order')
         return
 
 class Stocks(BaseHandler):
