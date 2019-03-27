@@ -276,7 +276,8 @@ class OrderProduct(BaseHandler):
             Products.remove(prodid)
         else:
             Products.create(sproduct,'Eddie')
-
+        
+        return self.redirect('/orderproduct?intent = %s' % intent)               
 
 class Order(BaseHandler):
     def get(self):

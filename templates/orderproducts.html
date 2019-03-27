@@ -107,12 +107,11 @@
                         {% for detail in prod.product%}
                         <td data-label="">{{ detail }}</td>
                         {% endfor %}
-                        <form action="/order" method="post" name="removeprod">
+                        <form action="/orderproduct" method="post" name="removeprod">
                             <td class="center aligned two wide">
                                 <input type="text" name="id" value="{{ prod.id }}" />
                                 <input type="hidden" value="REMOVEPRODUCT" name="intent">
-                                <button class="ui red button" type="submit" value="REMOVEPRODUCT"
-                                    name="intent">Remove</button>
+                                <button class="ui red button" type="submit" value="REMOVEPRODUCT" name="intent">Remove</button>
                             </td>
                         </form>
                     </tr>
@@ -154,8 +153,7 @@
                                             <input name="qty" id="qty" type="text">
                                         </div>
                                     </div>
-                                    <button class="ui blue button" type="submit" value="ADDPRODUCT"
-                                        name="intent">Submit</button>
+                                    <button class="ui blue button" type="submit" value="ADDPRODUCT" name="intent">Submit</button>
                                     <input class="ui red button" type="reset" value="Cancel" id="cancel">
                                 </div>
                             </form>
