@@ -76,10 +76,43 @@
       </a>
     </div>
   </div>
-
   <div class="ui container segment">
-
+    <h3 class="ui dividing header">
+      <i class="dolly flatbed icon large"></i>
+      <div class="content top">
+        SALES ORDER DASHBOARD
+      </div>
+      <!-- <i class="calendar alternate outline icon"></i> -->
+    </h3>
+    <table class="ui selectable sortable blue large padded table" id="triptable">
+      <thead>
+        <tr class="center aligned">
+          <th>CUSTOMER NAME</th>
+          <th>ADDRESS</th>
+          <th>CITY</th>
+          <th>COUNTRY</th>
+          <th class="two wide">STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- {% for prod in preorder %}
+        <tr class="center aligned">
+          {% for detail in prod.product%}
+          <td data-label="">{{ detail }}</td>
+          {% endfor %}
+          <form action="/orderproduct" method="post" name="removeprod">
+            <td class="center aligned two wide">
+              <input type="text" name="id" value="{{ prod.id }}" />
+              <input type="hidden" value="REMOVEPRODUCT" name="intent">
+              <button class="ui red button" type="submit" value="REMOVEPRODUCT" name="intent">Remove</button>
+            </td>
+          </form>
+        </tr>
+        {% endfor %} -->
+      </tbody>
+    </table>
   </div>
 
 </body>
+
 </html>

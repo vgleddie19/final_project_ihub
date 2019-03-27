@@ -205,7 +205,6 @@ class Orders(ndb.Model):
                 raise Exception('ORDER not found')
             order.key.delete()
         return true
-
 # End Model
 
 class BaseHandler(webapp2.RequestHandler):
@@ -232,9 +231,21 @@ class BaseHandler(webapp2.RequestHandler):
 
 # Main Handler
 class MainPage(BaseHandler):
+    def getDashBoardRecord(self):
+        results = {
+            '1':1,
+            '2':2
+            }
+        return results
+
     def get(self):
-        user = self.session.get('user')
-        self.render('index.html',{'user':user})
+        results = self.getDashBoardRecord()
+        template_values = {}
+        for item in results:
+            template_values.update({'so':item})
+
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render(template_values))
         return
     def post(self):
         intent = self.request.get('intent')
