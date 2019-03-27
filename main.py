@@ -52,24 +52,32 @@ class Products(ndb.Model):
             })
 
         return results
+    
+    @classmethod
+    def list_product(cls):
+        prod_results = cls.query().fetch()
+        results = []
+        for prod in prod_results:
+            results.append({
+                'product': prod.product
+            })
 
+        return results
     @classmethod
     def remove(cls, id):
         prod = cls.get_by_id(int(str(id)))
         if not prod:
             raise Exception('PRODUCT not found')
-
         prod.key.delete()
-        return True
         
     @classmethod
     def remove_all(cls):
-        for idx in cls.query().fetch:
-            prod = cls.get_by_id(int(str(idx)))
+        results = cls.query().fetch()
+        for idx in results:
+            prod = cls.get_by_id(int(str(idx.key.id())))
             if not prod:
                 raise Exception('PRODUCT not found')
             prod.key.delete()
-        return true
 
 class ShippingDetails(ndb.Model):
     details = ndb.StringProperty(repeated=True)
@@ -77,21 +85,21 @@ class ShippingDetails(ndb.Model):
 
     @classmethod
     def create(cls, details, user):
-        prod = cls()
-        prod.details = details
-        prod.user = user
-        prod.put()
-        return prod
+        sd = cls()
+        sd.details = details
+        sd.user = user
+        sd.put()
+        return sd
     
     @classmethod
     def update(cls, id, details, user):
-        prod = cls.get_by_id(int(str(id)))
-        if not prod:
+        sd = cls.get_by_id(int(str(id)))
+        if not sd:
             raise Exception('Shipping Details not found!')
-        prod.details = details
-        prod.user = user
-        prod.put()
-        return prod
+        sd.details = details
+        sd.user = user
+        sd.put()
+        return sd
 
     @classmethod
     def list_all(cls):
@@ -100,7 +108,18 @@ class ShippingDetails(ndb.Model):
         for detail in sd_results:
             results.append({
                 'id': detail.key.id(),
-                'details': detail.details
+                'shipping': detail.details
+            })
+
+        return results
+
+    @classmethod
+    def list_shipping(cls):
+        sd_results = cls.query().fetch()
+        results = []
+        for detail in sd_results:
+            results.append({
+                'shipping': detail.details
             })
 
         return results
@@ -112,16 +131,15 @@ class ShippingDetails(ndb.Model):
             raise Exception('Shipping Details not found')
 
         detail.key.delete()
-        return True
         
     @classmethod
     def remove_all(cls):
-        for idx in cls.query().fetch:
-            detail = cls.get_by_id(int(str(idx)))
+        results = cls.query().fetch()
+        for idx in results:
+            detail = cls.get_by_id(int(str(idx.key.id())))
             if not detail:
                 raise Exception('Shipping Details not found')
             detail.key.delete()
-        return true        
                
 class Orders(ndb.Model):
     details = ndb.StringProperty(repeated=True)
@@ -170,7 +188,7 @@ class Orders(ndb.Model):
                 'products': pdetails,
                 'user':prod.user
             })
-        return order
+        return order    
 
     def remove(cls, id):
         order = cls.get_by_id(int(str(id)))
@@ -181,7 +199,7 @@ class Orders(ndb.Model):
         return True
 
     def remove_all(cls):
-        for idx in cls().query().fetch:
+        for idx in cls().query().fetch():
             order = cls.get_by_id(int(str(idx)))
             if not order:
                 raise Exception('ORDER not found')
@@ -219,46 +237,70 @@ class MainPage(BaseHandler):
         self.render('index.html',{'user':user})
         return
     def post(self):
-        get
+        intent = self.request.get('intent')
+        if intent == "SAVEORDER":
+            prod_results = Products.list_product()
+            prodorder = []
+            for item in prod_results:
+                prodorder.append(str(item))
 
-class Order(BaseHandler):
+            ship_results = ShippingDetails.list_shipping()
+            shipping = []
+            for item in ship_results:
+                shipping.append(str(item))
+
+            Orders.create(shipping,prodorder,'Eddie')
+            Products.remove_all()
+            ShippingDetails.remove_all()
+
+        return self.redirect('/?intent = %s ' % intent)        
+        
+class OrderProduct(BaseHandler):
     def get(self):
         preorder = Products.list_all()
-        detail = ShippingDetails.list_all()
         template_values = {
-            'preorder':preorder,
-            'details':detail
+            'preorder':preorder
         }
-        template = JINJA_ENVIRONMENT.get_template('order.html')
+        template = JINJA_ENVIRONMENT.get_template('orderproducts.html')
         self.response.write(template.render(template_values))
     def post(self):
-        prodid = self.request.get('id')
         intent = self.request.get('intent')
+        prodid = self.request.get('id')
         sproduct = [
         self.request.get('productcode'),
         self.request.get('description'),
         self.request.get('uom'),
         self.request.get('qty')        
-        ]
-        details = []
-        details.append(self.request.get('shipping[first-name]'))
-        details.append(self.request.get('shipping[last-name]'))
-        details.append(self.request.get('shipping[address]'))
-        details.append(self.request.get('shipping[address-2]'))
-        details.append(self.request.get('States'))    
-        details.append(self.request.get('country'))
-
-        if intent == 'ADDPRODUCT':
-            if not details[0]:
-                ShippingDetails.create(details,'Eddie')                
-            Products.create(sproduct,'Eddie')
+        ]            
         if intent == 'REMOVEPRODUCT':
             Products.remove(prodid)
-        if intent == 'SAVEORDER':
-            products = Products.list_all()
-            # Orders       
+        else:
+            Products.create(sproduct,'Eddie')
 
-        return self.redirect('/order')        
+
+class Order(BaseHandler):
+    def get(self):
+        detail = ShippingDetails.list_all()
+        template_values = {
+            'details':detail
+        }
+        template = JINJA_ENVIRONMENT.get_template('order.html')
+        self.response.write(template.render(template_values))
+    def post(self):
+        intent = self.request.get('intent')
+        detail = ShippingDetails.list_all()
+        if not detail:
+            details = []
+            details.append(self.request.get('shipping[first-name]'))
+            details.append(self.request.get('shipping[last-name]'))
+            details.append(self.request.get('shipping[address]'))
+            details.append(self.request.get('shipping[address-2]'))
+            details.append(self.request.get('city'))    
+            details.append(self.request.get('country'))
+            if details[0]:
+                ShippingDetails.create(details,'Eddie')                
+        
+        return self.redirect('/orderproduct?intent = %s' % intent)        
 
 class LogIn(BaseHandler):
     def get(self):
@@ -295,6 +337,7 @@ config['webapp2_extras.sessions'] = {
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/order',Order),
+    ('/orderproduct',OrderProduct),
 ], debug=True,
 config=config)
 # End App
