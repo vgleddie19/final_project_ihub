@@ -3,6 +3,7 @@ import urllib
 import jinja2
 import webapp2
 import logging
+import ast
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -172,21 +173,11 @@ class Orders(ndb.Model):
         order_results = cls.query().order(
             -cls.created_date).fetch()
         order = []
-        for prod in order_results:
-            pdetails = list(prod.products)
-            for idx, item in enumerate(pdetails):
-                r = item.strip('"')
-                pdetails[idx] = r
-
-            odetails = list(prod.details)
-            for idx, item in enumerate(odetails):
-                r = item.strip('"')
-                odetails[idx] = r
-            
+        for so in order_results:           
             order.append({
-                'details': odetails,
-                'products': pdetails,
-                'user':prod.user
+                'details': so.details,
+                'products': so.products,
+                'user':so.user
             })
         return order    
 
@@ -231,22 +222,43 @@ class BaseHandler(webapp2.RequestHandler):
 
 # Main Handler
 class MainPage(BaseHandler):
-    def getDashBoardRecord(self):
-        results = {
-            '1':1,
-            '2':2
-            }
-        return results
-
     def get(self):
-        results = self.getDashBoardRecord()
-        template_values = {}
-        for item in results:
-            template_values.update({'so':item})
+        results = Orders.query().order(-Orders.created_date).fetch()
+        details = []
+        for row in results:
+            for cell in row.details:
+                details.append(cell)
+
+        details2 = []
+        for row in details:
+            x = ast.literal_eval(row)
+            details2.append(x)
+
+        shippingdetails=[]
+        count = 0
+        name = ''
+        for row in details2:
+            count = count + 1
+            name = name + cell
+            if count == 2:
+                shippingdetails.append(name)
+            else:
+                shippingdetails.append(cell)
+
+            # for cell in row: 
+            #     name = name + cell
+            #     if count == 2:
+            #        shippingdetails.append(name)
+            #     else:
+            #         shippingdetails.append(cell)
+        template_values = {
+            'so':details2
+        }
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
         return
+
     def post(self):
         intent = self.request.get('intent')
         if intent == "SAVEORDER":

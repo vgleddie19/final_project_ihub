@@ -95,20 +95,22 @@
         </tr>
       </thead>
       <tbody>
-        <!-- {% for prod in preorder %}
         <tr class="center aligned">
-          {% for detail in prod.product%}
-          <td data-label="">{{ detail }}</td>
+          {% for row in so:%}
+          {% for cell in row.shipping:%}
+
+          <td data-label="">{{ cell }}</td>
+
           {% endfor %}
-          <form action="/orderproduct" method="post" name="removeprod">
+          {% endfor %}
+          <!-- <form action="/orderproduct" method="post" name="removeprod">
             <td class="center aligned two wide">
-              <input type="text" name="id" value="{{ prod.id }}" />
+              <input type="text" name="id" value="{{ so.details }}" />
               <input type="hidden" value="REMOVEPRODUCT" name="intent">
               <button class="ui red button" type="submit" value="REMOVEPRODUCT" name="intent">Remove</button>
             </td>
-          </form>
+          </form> -->
         </tr>
-        {% endfor %} -->
       </tbody>
     </table>
   </div>
