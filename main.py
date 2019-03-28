@@ -225,34 +225,26 @@ class MainPage(BaseHandler):
     def get(self):
         results = Orders.query().order(-Orders.created_date).fetch()
         details = []
+        products = []
         for row in results:
             for cell in row.details:
                 details.append(cell)
+            for cell in row.products:
+                products.append(cell)
 
         details2 = []
         for row in details:
             x = ast.literal_eval(row)
             details2.append(x)
 
-        shippingdetails=[]
-        count = 0
-        name = ''
-        for row in details2:
-            count = count + 1
-            name = name + cell
-            if count == 2:
-                shippingdetails.append(name)
-            else:
-                shippingdetails.append(cell)
+        products2 = []
+        for row in products:
+            x = ast.literal_eval(row)
+            products2.append(x)
 
-            # for cell in row: 
-            #     name = name + cell
-            #     if count == 2:
-            #        shippingdetails.append(name)
-            #     else:
-            #         shippingdetails.append(cell)
         template_values = {
-            'so':details2
+            'so':details2,
+            'products':products2
         }
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
@@ -316,9 +308,7 @@ class Order(BaseHandler):
         if not detail:
             details = []
             details.append(self.request.get('shipping[first-name]'))
-            details.append(self.request.get('shipping[last-name]'))
             details.append(self.request.get('shipping[address]'))
-            details.append(self.request.get('shipping[address-2]'))
             details.append(self.request.get('city'))    
             details.append(self.request.get('country'))
             if details[0]:

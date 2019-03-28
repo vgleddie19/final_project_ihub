@@ -89,32 +89,22 @@
                     <form class="ui form" action="/order" method="POST">
                         <h4 class="ui dividing header">Shipping Information</h4>
                         <div class="field">
-                                <label>Name</label>
-                            <div class="two fields">
-                                <div class="field">
-                                    <input type="text" name="shipping[first-name]" placeholder="First Name" value="{{ item.shipping[0] }}">
-                                </div>
-                                <div class="field">
-                                    <input type="text" name="shipping[last-name]" placeholder="Last Name" value="{{ item.shipping[1] }}">
-                                </div>
+                            <label>Name</label>
+                            <div class="field">
+                                <input type="text" name="shipping[first-name]" placeholder="First Name" value="{{ item.shipping[0] }}">
                             </div>
                         </div>
                         <div class="field">
                             <label>Billing Address</label>
-                            <div class="fields">
-                                <div class="twelve wide field">
-                                    <input type="text" name="shipping[address]" placeholder="Street Address" value="{{ item.shipping[2] }}">
-                                </div>
-                                <div class="four wide field">
-                                    <input type="text" name="shipping[address-2]" placeholder="Apt #" value="{{ item.shipping[3] }}">
-                                </div>
+                            <div class="field">
+                                <input type="text" name="shipping[address]" placeholder="Street Address" value="{{ item.shipping[1] }}">
                             </div>
                         </div>
                         <div class="two fields">
                             <div class="field">
                                 <label>City</label>
                                 <div class="ui fluid search selection dropdown">
-                                    <input type="hidden" name="city" value="{{ item.shipping[4] }}">
+                                    <input type="hidden" name="city" value="{{ item.shipping[2] }}">
                                     <i class="dropdown icon"></i>
                                     <div class="default text">Select City</div>
                                     <div class="menu">
@@ -129,7 +119,7 @@
                             <div class="field">
                                 <label>Country</label>
                                 <div class="ui fluid search selection dropdown">
-                                    <input type="hidden" name="country" value="{{ item.shipping[5] }}">
+                                    <input type="hidden" name="country" value="{{ item.shipping[3] }}">
                                     <i class="dropdown icon"></i>
                                     <div class="default text">Select Country</div>
                                     <div class="menu">
@@ -159,24 +149,14 @@
                 <h4 class="ui dividing header">Shipping Information</h4>
                 <div class="field">
                     <label>Name</label>
-                    <div class="two fields">
-                        <div class="field">
-                            <input type="text" name="shipping[first-name]" placeholder="First Name">
-                        </div>
-                        <div class="field">
-                            <input type="text" name="shipping[last-name]" placeholder="Last Name">
-                        </div>
+                    <div class="field">
+                        <input type="text" name="shipping[first-name]" placeholder="First Name">
                     </div>
                 </div>
                 <div class="field">
                     <label>Billing Address</label>
-                    <div class="fields">
-                        <div class="twelve wide field">
-                            <input type="text" name="shipping[address]" placeholder="Street Address">
-                        </div>
-                        <div class="four wide field">
-                            <input type="text" name="shipping[address-2]" placeholder="Apt #">
-                        </div>
+                    <div class="field">
+                        <input type="text" name="shipping[address]" placeholder="Address">
                     </div>
                 </div>
                 <div class="two fields">
